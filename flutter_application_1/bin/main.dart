@@ -3,10 +3,11 @@ import 'package:surf_study_jam/surf_study_jam.dart';
 
 void main(List<String> args) async {
   var client = StudyJamClient();
-  client = client.getAuthorizedClient(token);
+  // print(token);
+  // client = client.getAuthorizedClient(token);
   final srvc = ChatService();
   await srvc.loadFromDisk();
-  srvc.token = token;
+  // srvc.token = token;
   srvc.client = client;
   await srvc.refresh();
   await srvc.saveToDisk();

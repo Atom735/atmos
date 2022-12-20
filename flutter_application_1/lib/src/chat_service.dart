@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:surf_study_jam/surf_study_jam.dart';
 
@@ -102,12 +103,18 @@ class ChatService {
     final msgsI = indexes.msgs;
     if (msgsI?.isNotEmpty ?? false) {
       msgsI!;
-      final msgs = await client
-          .getMessagesByIds(msgsI.values.expand((element) => element).toList());
-      for (final e in msgs) {
-        (this.msgs[e.chatId] ??= {})[e.id] = e;
+      final indexes = msgsI.values.expand((element) => element).toList();
+      if (indexes.isNotEmpty) {
+        for (var i = 0; i < (indexes.length - 1) ~/ 1000 + 1; i++) {
+          final msgs = await client.getMessagesByIds(
+            indexes.skip(i * 1000).take(1000).toList(),
+          );
+          for (final e in msgs) {
+            (this.msgs[e.chatId] ??= {})[e.id] = e;
+          }
+          out = true;
+        }
       }
-      out = true;
     }
     return out;
   }
